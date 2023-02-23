@@ -1,0 +1,16 @@
+body{
+    background-color: black !important;
+}
+
+canvas{
+    border: 1px solid red;
+}
+
+#maindiv{
+    height: 900px;
+}
+
+#message{
+    width: 400px;
+    height: 100px;
+}
