@@ -6,3 +6,4 @@ pydantic
 python-multipart
 tensorflow
 numpy
+scikit-learn

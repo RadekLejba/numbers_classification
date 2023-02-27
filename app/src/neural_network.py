@@ -11,13 +11,15 @@ from tensorflow.keras.models import Sequential
 
 model = Sequential(
     [
-        tf.keras.Input(shape=(100,)),
-        Dense(128, activation="relu"),
-        Dense(64, activation="relu"),
+        tf.keras.Input(shape=(40000,)),
+        Dense(128, activation="sigmoid"),
+        Dense(64, activation="sigmoid"),
+        Dense(32, activation="sigmoid"),
         Dense(10, activation="linear"),
     ],
-    name="numbers_classification_model",
+    name="numbers_classification_model1",
 )
+
 
 model.compile(
     loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -54,16 +56,20 @@ def load_training_data() -> Tuple[list, list]:
 
 
 def train_model(X_train: list, y_train: list) -> None:
-    model.fit(X_train, y_train, epochs=3000)
+    model.fit(X_train, y_train, epochs=300)
     model.summary()
 
 
-def categorize_image(decoded_image: bytes):
+def predict_label(x: list, internal_model: Sequential = model) -> np.signedinteger:
+    prediction_array = internal_model.predict([x])
+    prediction_array_with_softmax = tf.nn.softmax(prediction_array)
+    return np.argmax(prediction_array_with_softmax)
+
+
+def categorize_image(decoded_image: bytes) -> np.signedinteger:
     image = Image.open(BytesIO(decoded_image))
     bw_array = transform_to_black_and_white_array(image.getdata())
 
-    prediction_array = model.predict([bw_array])
-    prediction_array_with_softmax = tf.nn.softmax(prediction_array)
-    prediction = np.argmax(prediction_array_with_softmax)
+    prediction = predict_label(bw_array)
 
     return prediction
